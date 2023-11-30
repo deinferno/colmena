@@ -64,6 +64,9 @@ pub struct NodeConfig {
     #[serde(rename = "targetPort")]
     target_port: Option<u16>,
 
+    #[serde(rename = "targetExtraSSHOpts")]
+    target_extra_ssh_opts: Option<Vec<String>>,
+
     #[serde(rename = "allowLocalDeployment")]
     allow_local_deployment: bool,
 
@@ -184,6 +187,10 @@ impl NodeConfig {
 
             if let Some(target_port) = self.target_port {
                 host.set_port(target_port);
+            }
+
+            if let Some(target_extra_ssh_opts) = self.target_extra_ssh_opts.clone() {
+                host.set_extra_ssh_opts(target_extra_ssh_opts.clone());
             }
 
             host

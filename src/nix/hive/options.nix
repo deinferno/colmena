@@ -118,6 +118,13 @@ with builtins; rec {
           type = types.nullOr types.ints.unsigned;
           default = null;
         };
+        targetExtraSSHOpts = lib.mkOption {
+          description = mdDoc ''
+            Extra SSH options for deployment.
+          '';
+          type = types.listOf types.str;
+          default = [];
+        };
         targetUser = lib.mkOption {
           description = mdDoc ''
             The user to use to log into the remote node. If set to null, the

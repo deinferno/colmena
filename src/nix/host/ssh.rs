@@ -30,6 +30,9 @@ pub struct Ssh {
     /// Local path to a ssh_config file.
     ssh_config: Option<PathBuf>,
 
+    /// Extra options passed to SSH
+    extra_ssh_opts: Option<Vec<String>>,
+
     /// Command to elevate privileges with.
     privilege_escalation_command: Vec<String>,
 
@@ -188,6 +191,7 @@ impl Ssh {
             host,
             port: None,
             ssh_config: None,
+            extra_ssh_opts: None,
             privilege_escalation_command: Vec::new(),
             use_nix3_copy: false,
             job: None,
@@ -200,6 +204,10 @@ impl Ssh {
 
     pub fn set_ssh_config(&mut self, ssh_config: PathBuf) {
         self.ssh_config = Some(ssh_config);
+    }
+
+    pub fn set_extra_ssh_opts(&mut self, extra_ssh_opts: Vec<String>) {
+        self.extra_ssh_opts = Some(extra_ssh_opts);
     }
 
     pub fn set_privilege_escalation_command(&mut self, command: Vec<String>) {
@@ -335,8 +343,6 @@ impl Ssh {
     }
 
     fn ssh_options(&self) -> Vec<String> {
-        // TODO: Allow configuation of SSH parameters
-
         let mut options: Vec<String> = [
             "-o",
             "StrictHostKeyChecking=accept-new",
@@ -356,6 +362,10 @@ impl Ssh {
         if let Some(ssh_config) = self.ssh_config.as_ref() {
             options.push("-F".to_string());
             options.push(ssh_config.to_str().unwrap().to_string());
+        }
+
+        if let Some(extra_ssh_opts) = self.extra_ssh_opts.clone() {
+            options.append(&mut extra_ssh_opts.clone());
         }
 
         options
